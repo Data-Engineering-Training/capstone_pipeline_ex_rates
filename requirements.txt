@@ -1,0 +1,9 @@
+#python 3.x.x
+psycopg2
+boto3
+requests
+json
+gzip
+
+
+
