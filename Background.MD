@@ -73,6 +73,8 @@ If the hour part of the primary key is taken out, in situations where a currency
 To resolve this problem, I created another column which combines the date and rate and set it as a primary key. This new column was what was used to check the on conflict rule. On the same day(date) if the rate remains the same throughout no new data will be added.
 
 
+Inserting data from the pandas data frame is not the optimal way.
+I inserted data of 169 rows but only 156 rows were inserted, i investigated and realized the varchar length of one of the columns(rate_checker) was less than the values of those that were not inserted. To add the missing data I had to run insert from the csv file itself. This was to avoid "insufficient" data.
 
 
 

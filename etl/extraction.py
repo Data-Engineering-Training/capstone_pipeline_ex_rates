@@ -24,7 +24,7 @@ def extract_transform_load():
     api_data = response.text
 
     if response.status_code == 200:  
-        api_data = f''' {api_data} '''
+        api_data = api_data.replace("\n", "").replace("'", '"')
         api_data
         api_data = json.loads(api_data)
         # api_data
@@ -52,7 +52,9 @@ def extract_transform_load():
         df['Base'] = base
         df['Timestamp'] = timestamp 
         df['Date'] = year
-        df = df[['Primary_key', 'Currency', 'Rate', 'Base', 'Date', 'Timestamp' ]]
+        # Create a rate_checker column to check for uchanged daily rates 
+        df['Rate_Checker'] = primary_key_year + df['Rate'].astype(str).str.replace(".", "").str[:5]
+        df = df[['Primary_key', 'Currency', 'Rate', 'Base', 'Date', 'Timestamp', 'Rate_Checker' ]]
         print("API Data Successfully Extracted")
     else:
         ("Failed to retrieve data. Status code:", response.status_code)
@@ -87,7 +89,8 @@ def extract_transform_load():
                             rate NUMERIC(16, 8),
                             base VARCHAR(3),
                             date Date,
-                            timestamp VARCHAR(16)
+                            timestamp VARCHAR(16),
+                            rate_checker VARCHAR(45) UNIQUE
                             
                         )'''
         cur_pg.execute(rates_table)
@@ -98,15 +101,24 @@ def extract_transform_load():
         print("Error occurred:", e)
 
     # Insert data into local PostgreSQL
+
     try:
         batch_size = 200
         for i in range(0, len(df), batch_size):
             batch_df = df.iloc[i:i + batch_size]
             values = [tuple(row) for row in batch_df.values]
             placeholders = ','.join(['%s'] * len(df.columns))
-            insert_query = f'''INSERT INTO {table_name} (primary_key, currency, rate, base, date, timestamp) 
+            insert_query = f'''INSERT INTO {table_name} (primary_key, currency, rate, base, date, timestamp, rate_checker) 
                               VALUES ({placeholders}) 
-                              ON CONFLICT (rate, date, primary_key) DO NOTHING'''
+                              ON CONFLICT(rate_checker) 
+                              DO UPDATE
+                              SET primary_key = EXCLUDED.primary_key,
+                              currency = EXCLUDED.currency,
+                              rate = EXCLUDED.rate,
+                              base = EXCLUDED.base,
+                              date = EXCLUDED.date,
+                              timestamp = EXCLUDED.timestamp; '''
+                               
             cur_pg.executemany(insert_query, values)
             conn_pg.commit()
             print('Data Successfully Inserted into Local Postgres DB')
