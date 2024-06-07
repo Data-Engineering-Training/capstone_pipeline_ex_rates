@@ -11,8 +11,9 @@ dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config
 sys.path.append(dir_path)
 dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'etl'))
 sys.path.append(dir_path)
-import connection
-import extraction
+
+import connection #from config directory
+import extraction #from etl directory
 
 
 
@@ -41,11 +42,6 @@ def upload_to_s3(file_name, bucket_name):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
-# Example usage:
-try:
-    upload_to_s3('/path/to/your/file.csv')
-except:
-    print("Something went wrong during the upload process.")   
         
 if __name__ == "__main__":
     upload_to_s3()

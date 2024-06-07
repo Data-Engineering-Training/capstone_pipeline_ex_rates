@@ -30,22 +30,16 @@ with DAG(
     catchup=True
 ) as dag:
     
-    extract_rates = BashOperator(
+    test_connection = BashOperator(
         task_id='extract_exchange_rate',
-        bash_command=f"python3 {root_location}etl/extraction.py",
+        bash_command=f"python3 {root_location}/config/connection.py",
+        dag=dag,
+    )
+    extract_transform_load = BashOperator(
+        task_id='extract_exchange_rate',
+        bash_command=f"python3 {root_location}/pipeline/main.py",
         dag=dag
     )
-    # upload_to_s3 = BashOperator(
-    #     task_id = 'upload_exchange_rate_CSV_to_s3',
-    #     bash_command=f"python3 {root_location}load/upload_to_s3.py",
-    #     dag=dag,
-    # )
-    # copy_to_redshift = BashOperator(
-    #     task_id = 'copy_to_redshift',
-    #     bash_command=f"python3 {root_location}load/copy_to_redshift.py",
-    #     dag=dag
-    # )
 
-extract_rates#>>upload_to_s3 #>>copy_to_redshift
-
+test_connection>>extract_transform_load
 

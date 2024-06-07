@@ -36,7 +36,7 @@ redshift_password = os.getenv('REDSHIFT_PASSWORD ')
 
 
 def connect_to_redshift():
-    pass
+    
     try:
         conn_redshift = psycopg2.connect(
             dbname=redshift_dbname,
@@ -45,13 +45,14 @@ def connect_to_redshift():
             user=redshift_user,
             password=redshift_password
         )
+        print('conn_redshift success')
         return conn_redshift
     except Exception as e:
         print("Error connecting to Redshift:", e)
         return None
 
 def connect_to_s3():
-    pass
+    
     try:
         s3_bucket = boto3.client(
             's3',
@@ -59,13 +60,14 @@ def connect_to_s3():
             aws_secret_access_key=aws_secret_access_key,
             region_name=region_name
         )
+        print('s3_bucket connection successful')
         return s3_bucket
     except Exception as e:
         print("Error connecting to S3:", e)
         return None
 
 def connect_to_local_postgres():
-    pass
+    
     try:
         conn_pg = psycopg2.connect(
             dbname=pg_dbname,
@@ -74,7 +76,17 @@ def connect_to_local_postgres():
             user=pg_user,
             password=pg_password
         )
+        print("postgress conection successful")
         return conn_pg
     except Exception as e:
         print("Error connecting to local PostgreSQL:", e)
         return None
+
+redshift = connect_to_redshift()
+print(redshift)
+
+s3 = connect_to_s3()
+print(s3)
+
+postgres = connect_to_local_postgres()
+print(postgres)
