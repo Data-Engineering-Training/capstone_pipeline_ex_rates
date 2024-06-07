@@ -28,11 +28,7 @@ redshift_port = os.getenv('REDSHIFT_PORT')
 redshift_user = os.getenv('REDSHIFT_USER ')
 redshift_password = os.getenv('REDSHIFT_PASSWORD ')
 
-# dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config'))
-# sys.path.append(dir_path)
-# import config
-# from config import redshift_dbname, redshift_host, redshift_port, redshift_user, redshift_password, aws_access_key_id, aws_secret_access_key, region_name, pg_dbname, pg_host, pg_port, pg_user, pg_password, url
-
+# a872d43c93724c798fe5b09d3699ea80
 
 
 def connect_to_redshift():

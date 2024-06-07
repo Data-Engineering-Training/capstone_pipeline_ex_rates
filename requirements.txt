@@ -4,6 +4,7 @@ boto3
 requests
 json
 gzip
+conda
 
 
 

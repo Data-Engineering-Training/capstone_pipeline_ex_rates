@@ -4,18 +4,18 @@ This repository contains an ETL (Extract, Transform, Load) pipeline designed to 
 
 ## Files:
 
-### 1. `config.py`
+### 1. `config/connection.py`
 
 This file contains the connection parameters for various databases and services used in the ETL pipeline, including Redshift, S3, and local PostgreSQL. Change the parameters to what applies in your local and cloud environment. The Cloud Provider used is Amazon AWS.
 
-### 2. `extract_etl.py`
+### 2. `etl/extraction.py`
 
 This Python script orchestrates the ETL process. It connects to both the Redshift and local PostgreSQL databases, retrieves data from the openexchangerates API, processes it, and uploads it to the databases. The locally persisted files are in the datasets directory.
-The files persisted in S3 bucket are in {the-name-of-your-bucket}/datasets
+The files persisted in S3 bucket are in {the-name-of-your-bucket}/data
 
-### 3. `connection.py`
+### 3. `tests directory`
 
-This file establishes database connections and contains functions for connecting to both Redshift and local PostgreSQL databases.
+This directory contains unit tests which mocks the connection and extraction
 
 ### 4. `README.md`
 
@@ -31,16 +31,11 @@ To set up the ETL pipeline, follow these steps:
 
    ```bash
    [pip install -r requirements.txt]
-3. Test your connection parameters, run [make connection] in your terminal
+3. Test your connection parameters, run the connection.py file inside the config directory 
 
-4. To orchestrate the ETL process, run [make] in your terminal
+4. To orchestrate the ETL process, run main.py in the pipeline directory 
 
-### Contributors <br>
+5. To use Airflow, copy the pipeline_dag.py file in the dags folder to your airflow dag folder and modify the {root_directory} to reflect that of your environment
 
-Benjamin Sakyi - bsakyi@trestleacademyghana.org -Project Lead <br>
-Nana Kwame Opoku - nopoku@trestleacademyghana.org <br>
-Kenneth Boateng - boateng@trestleacademyghana.org <br>
-Frank Agbenyo Fugah - fugah@trestleacademyghana.org <br>
-Carl Bebli - cbebli@trestleacademyghana.org <br>
-Richard Owusu - rich@trestleacademyghana.org <br>
-Delbert Pecker - pecker@trestleacademyghana.org
+
+

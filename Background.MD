@@ -12,7 +12,9 @@ The timestamp returned in the request is converted to a unix datetime format whi
 A column is created with the name 'Date' which contains the date from the timestamp in the format 'YYYY-MM-DD'
 The date together with the timestamp will be put together to create a unique column and a primary key.
 
-Due to the fact that the data is that of exchange rates, which seldom changes within a day, when there script is run more than once within same day,  the rate values are updated, eventhough they will likely be the same.
+A column by name, Rate_Checker is created which checks if the rate of a currency has changed within a day or not. The column is value is made up of the currency name, date, and rate. This columnis set us unique.
+
+Due to the fact that the data is that of exchange rates, which seldom changes within a day, when there script is run more than once within same day,  the rate values are left the same if it has not changed, a new entry is made if the exchange rates change.
 
 
 # Persisted Files (datasets directory)
@@ -48,8 +50,7 @@ In the S3 they are in {your-bucket-name}/datasets directory. The subdirectory da
         extract.ipynb
             this is a jupyter notebook copy of the extract_etl.py script
 
-        Makefile -
-            this file helps in calling either one or all the script with the make command
+       
 
         Readme.MD -
             A description of the process and how to setup and use this repo
@@ -63,18 +64,7 @@ In the S3 they are in {your-bucket-name}/datasets directory. The subdirectory da
 
 
 
-# Problems Faced
 
-I wanted to ignore insertion in situations where the pipeline is run within the same day but the rates have not changed. adding the ONCONFLICT rule to the date and rate column will not work because those columns are not unique. 
-Meanwhile the primary key which will be able to work with the ONCONFLICT rule will result in inserting same rate multiple times for the same day. This is because, the primary key is a combnation of the currenty symbol (eg. GHS), the date and the hour.
-
-If the hour part of the primary key is taken out, in situations where a currency becomes highly volatile where the rate changes within a day, it will not be possible to get either the first rate or the last rate, depending on whether it is an upsert system or append system.
-
-To resolve this problem, I created another column which combines the date and rate and set it as a primary key. This new column was what was used to check the on conflict rule. On the same day(date) if the rate remains the same throughout no new data will be added.
-
-
-Inserting data from the pandas data frame is not the optimal way.
-I inserted data of 169 rows but only 156 rows were inserted, i investigated and realized the varchar length of one of the columns(rate_checker) was less than the values of those that were not inserted. To add the missing data I had to run insert from the csv file itself. This was to avoid "insufficient" data.
 
 
 
