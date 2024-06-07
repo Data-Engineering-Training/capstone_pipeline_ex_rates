@@ -61,12 +61,15 @@ def extract_transform_load():
 
 
     # Save data to CSV
-    csv_file_path = f'../data/exchange_rate_{rate_date}.csv' 
-    df.to_csv(csv_file_path, index=False)
-
+    csv_file_path = f'../data/exchange_rate_{rate_date}.csv.gz' 
+    df.to_csv(csv_file_path, index=False, compression='gzip')
+   
     # Compress CSV to gzip
-    file_name = csv_file_path + '.gz'
-    df.to_csv(file_name, index=False, compression='gzip')
+    # file_name = csv_file_path + '.gz'
+    # df.to_csv(file_name, index=False, compression='gzip')
+
+    compressed_csv_s3 = csv_file_path[2:] #this slicing of the file path will takeout the leading ../
+    #so as to make the directory in s3 properly organized
 
     # Upload to S3
     # compressed_csv_s3 = file_name[2:]
