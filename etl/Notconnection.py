@@ -13,6 +13,7 @@ load_dotenv(DOT_ENV, override=True)
 
 # API URL
 url = os.getenv('url')
+print(url)
 
 # Postgres Connection Parameters
 pg_dbname = os.getenv("POSTGRES_DATABASE")

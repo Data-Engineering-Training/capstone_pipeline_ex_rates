@@ -10,13 +10,13 @@ from airflow.utils.dates import days_ago
 
 start_date = days_ago(1)
 schedule_interval = '0 8,18 * * *'  # Runs at 8:00 and 18:00 UTC every day
-root_location = '~/Desktop/Trestle/Git/capstone_exchange_rates/' #location of scripts which will be run by airflow dag
+root_location = '$HOME/Desktop/Trestle/Git/capstone_exchange_rates' #location of scripts which will be run by airflow dag
 
 
 # Define the default arguments for the DAG
 default_args = {
     'owner': 'ben',
-    'retries': 3,
+    'retries': 1,
     'retry_delay': timedelta(minutes=10)
 }
 
@@ -32,20 +32,20 @@ with DAG(
     
     extract_rates = BashOperator(
         task_id='extract_exchange_rate',
-        bash_command=f"python {root_location}etl/extraction.py",
-        dag=dag,
-    )
-    upload_to_s3 = BashOperator(
-        task_id = 'upload_exchange_rate_CSV_to_s3',
-        bash_command=f"python {root_location}load/upload_to_s3.py",
+        bash_command=f"python3 {root_location}etl/extraction.py",
         dag=dag
     )
+    # upload_to_s3 = BashOperator(
+    #     task_id = 'upload_exchange_rate_CSV_to_s3',
+    #     bash_command=f"python3 {root_location}load/upload_to_s3.py",
+    #     dag=dag,
+    # )
     # copy_to_redshift = BashOperator(
     #     task_id = 'copy_to_redshift',
-    #     bash_command=f"python {root_location}load/copy_to_redshift.py",
+    #     bash_command=f"python3 {root_location}load/copy_to_redshift.py",
     #     dag=dag
     # )
 
-extract_rates>>upload_to_s3 #>>copy_to_redshift
+extract_rates#>>upload_to_s3 #>>copy_to_redshift
 
 

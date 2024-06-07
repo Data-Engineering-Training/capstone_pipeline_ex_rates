@@ -65,6 +65,7 @@ def connect_to_s3():
         return None
 
 def connect_to_local_postgres():
+    pass
     try:
         conn_pg = psycopg2.connect(
             dbname=pg_dbname,
